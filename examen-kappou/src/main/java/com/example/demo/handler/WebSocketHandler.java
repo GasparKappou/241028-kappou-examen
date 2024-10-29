@@ -16,11 +16,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         // Cuando se establece una conexión, agregar la sesión a la lista
         sessions.add(session);
+        //foreach(){
+        	//cosas
+        //}
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         // Cuando se recibe un mensaje, enviarlo a todos los clientes conectados
+    	mensajes.add(message.getPayload());
         for (WebSocketSession webSocketSession : sessions) {
             webSocketSession.sendMessage(new TextMessage(message.getPayload()));
         }
