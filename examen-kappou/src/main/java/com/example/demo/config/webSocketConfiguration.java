@@ -19,6 +19,3 @@ public class webSocketConfiguration implements WebSocketConfigurer {
         registry.addHandler(ChatWebSocketHandler, "/chat"); // Permitir cualquier origen (modificar según seguridad)
     }
 }
-
-
-

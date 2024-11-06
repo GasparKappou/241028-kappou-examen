@@ -1,222 +1,93 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-	rel="stylesheet">
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<title>WebChat</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>WebChat</title>
 </head>
 
 <body>
-
-	<h1>Chat</h1>
-
-	<div class="input-group mb-3">
-
-		<label for="name" class="input-group-text">Nombre: </label> <input
-			type="text" name="name" id="name" class="form-control"
-			placeholder="Introduce tu nombre">
-
-	</div>
-
-	<div class="input-group mb-3">
-
-		<label for="message" class="input-group-text">Mensaje: </label> <input
-			type="text" name="message" id="message" class="form-control"
-			placeholder="Escribe un mensaje">
-
-	</div>
-
-	<button id="send" type="button" class="btn btn-dark">Enviar</button>
-
-	<div>
-
-		<div id="chat"
-			style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
-
-		</div>
-
-	</div>
-
-	<script>
-	/*
-	Todos los mensajes se deberán guardar en un array list
-	
-	En cada nueva session generada o cliente que se conecte se le deberán enviar todos los mensajes que estén en el arrayList
-	
-	
-	Subir todo al repo
-	
-	Adjuntar el link del repo a esta tarea (con el botón de adjuntar enlace). La hora del último commit no debe ser superior a la hora de entrega del examen
-	
-	*/
-		const messages = []
-		let socket = new WebSocket('ws://localhost:8080/chat');
-
-		// Cuando se abre la conexión
-
-		socket.onopen = function(messages) {
-
-			console.log('Conexión WebSocket abierta.');
-			
-		};
-
-		// Manejar mensajes entrantes
-		function showMessage(messageData, event) {
-			// Mostrar el mensaje en el div #chat
-			const messageElement = document.createElement('div');
-
-			messageElement.textContent = messageData.name + ": "
-
-			+ messageData.message; // Nombre y mensaje
-
-			document.getElementById('chat').appendChild(messageElement);
-
-
-		}
-
-		function showMessageWeb(messageData, event) {
-			// Mostrar el mensaje en el div #chat
-			const messageElement = document.createElement('div');
-
-			messageElement.textContent = "Servidor: WebSocket es un protocolo de comunicacion bidireccional. WebSocket trabaja en el puerto 80";
-
-			document.getElementById('chat').appendChild(messageElement);
-
-
-		}
-
-		socket.onmessage = function(event, messages) {
-
-			
-			console.log('Mensaje recibido:', event.data);
-
-			const messageData = JSON.parse(event.data); // Suponiendo que los mensajes recibidos están en formato JSON
-
-			if (messageData.message == "websocket") {
-				showMessageWeb(messageData, event);
-			} else {
-
-				showMessage(messageData, event);
-			}
-			// Desplazar automáticamente hacia abajo para mostrar el último mensaje
-
-			document.getElementById('chat').scrollTop = document
-
-			.getElementById('chat').scrollHeight;
-			console.log(messageData.message)
-			messages.push(messageData.message);
-			
-		};
-
-		// Cuando la conexión se cierra
-
-		socket.onclose = function(event) {
-
-			console.log('Conexión WebSocket cerrada:', event);
-
-			if (event.wasClean) {
-
-				console.log('La conexión se cerró limpiamente.');
-
-			} else {
-
-				console.error('La conexión se cerró abruptamente. Código:',
-
-				event.code, ' Motivo:', event.reason);
-
-			}
-
-		};
-
-		// Manejar errores en la conexión
-
-		socket.onerror = function(error) {
-
-			console.error('Error en WebSocket:', error);
-
-		};
-
-		$(document)
-				.ready(
-
-						function() {
-
-							$('#send')
-									.click(
-
-											function() {
-
-												const message = $('#message')
-														.val();
-
-												const name = $('#name').val();
-
-												if (message && name) {
-
-													const chatMessage = {
-
-														name : name,
-
-														message : message
-
-													}; // Crear el objeto del mensaje
-
-													socket
-															.send(JSON
-																	.stringify(chatMessage)); // Enviar el mensaje al servidor
-
-													$('#message').val(''); // Limpiar el campo de mensaje
-
-													// Mostrar el mensaje enviado en el div #chat
-
-													const messageElement = document
-															.createElement('div');
-
-													messageElement
-															.setAttribute("id",
-																	"DivChat");
-
-													document
-															.getElementById(
-																	'chat')
-															.appendChild(
-																	messageElement);
-
-													// Desplazar automáticamente hacia abajo
-
-													document
-															.getElementById('chat').scrollTop = document
-															.getElementById('chat').scrollHeight;
-
-												}
-
-											});
-
-							$('#message').keypress(function(e) {
-
-								if (e.which === 13) { // Si se presiona la tecla Enter
-
-									$('#send').click(); // Enviar el mensaje
-
-								}
-
-							});
-
-						});
-	</script>
+    <h1>Chat</h1>
+
+    <div class="input-group mb-3">
+        <label for="name" class="input-group-text">Nombre: </label>
+        <input type="text" name="name" id="name" class="form-control" placeholder="Introduce tu nombre">
+    </div>
+
+    <div class="input-group mb-3">
+        <label for="message" class="input-group-text">Mensaje: </label>
+        <input type="text" name="message" id="message" class="form-control" placeholder="Escribe un mensaje">
+    </div>
+
+    <button id="send" type="button" class="btn btn-dark">Enviar</button>
+
+    <div>
+        <div id="chat" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-top: 10px;"></div>
+    </div>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:8080/chat');
+
+        // Cuando se abre la conexión
+        socket.onopen = function() {
+            console.log('Conexión WebSocket abierta.');
+        };
+
+        // Manejar mensajes entrantes
+        function showMessage(messageData) {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = messageData.name + ": " + messageData.message;
+            document.getElementById('chat').appendChild(messageElement);
+
+            // Desplazar automáticamente hacia abajo para mostrar el último mensaje
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+        }
+
+        socket.onmessage = function(event) {
+            console.log('Mensaje recibido:', event.data);
+            const messageData = JSON.parse(event.data);
+            showMessage(messageData);
+        };
+
+        // Cuando la conexión se cierra
+        socket.onclose = function(event) {
+            console.log('Conexión WebSocket cerrada:', event);
+            if (event.wasClean) {
+                console.log('La conexión se cerró limpiamente.');
+            } else {
+                console.error('La conexión se cerró abruptamente. Código:', event.code, ' Motivo:', event.reason);
+            }
+        };
+
+        // Manejar errores en la conexión
+        socket.onerror = function(error) {
+            console.error('Error en WebSocket:', error);
+        };
+
+        // Enviar mensaje al hacer clic en el botón "Enviar"
+        document.getElementById('send').addEventListener('click', function() {
+            const name = document.getElementById('name').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (name && message) {
+                const messageData = {
+                    name: name,
+                    message: message
+                };
+
+                // Enviar el mensaje a través de WebSocket en formato JSON
+                socket.send(JSON.stringify(messageData));
+
+                // Limpiar el campo de mensaje
+                document.getElementById('message').value = '';
+            } else {
+                alert("Por favor, introduce un nombre y un mensaje.");
+            }
+        });
+    </script>
 
 </body>
-
 </html>
