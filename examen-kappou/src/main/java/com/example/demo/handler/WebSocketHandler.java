@@ -25,10 +25,19 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
-        
-        // Si el mensaje es "websocket", responde solo a ese cliente
-        if (payload == "websocket") {
-            String responseText = "WebSocket es un protocolo de comunicación bidireccional. WebSocket trabaja en el puerto 80";
+
+        // Si el mensaje es "enviar_a_todos", envía un mensaje específico a todos los clientes
+        if (payload.equals("enviar_a_todos")) {
+            String responseText = "{'name': 'Server', 'message': 'Este es un mensaje específico enviado a todos los clientes conectados.'}";
+
+            for (WebSocketSession webSocketSession : sessions) {
+                if (webSocketSession.isOpen()) {
+                    webSocketSession.sendMessage(new TextMessage(responseText));
+                }
+            }
+        } else if (payload.contains("websocket")) {
+            // Responde solo al cliente que envió el mensaje
+        	String responseText = "{\"name\": \"Server\", \"message\": \"WebSocket es un protocolo de comunicación bidireccional. WebSocket trabaja en el puerto 80\"}";
             session.sendMessage(new TextMessage(responseText));
         } else {
             // Guardar el mensaje en la lista de mensajes
@@ -42,6 +51,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
         }
     }
+
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, org.springframework.web.socket.CloseStatus status)
